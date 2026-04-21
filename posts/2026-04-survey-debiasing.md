@@ -106,3 +106,19 @@ A three-step workflow for your next sub-5%-response-rate survey:
 3. **Report both numbers plus the sensitivity.** Publish the naive estimate, the trimmed-IPW debiased estimate, and the raw-IPW debiased estimate side-by-side. The gap between them is your best summary of how much the selection bias is doing. In our example that gap was **40.9% → 26.7% → 22.9%** — the difference between shipping one-hour delivery as a mass-market product or a premium niche.
 
 The non-destructive principle: don't throw biased survey data away, and don't pretend it isn't biased. Fit the propensity model, weight honestly, and tell the whole story.
+
+---
+
+## References
+
+1. Bradley, V. C., Kuriwaki, S., Isakov, M., Sejdinovic, D., Meng, X.-L., & Flaxman, S. (2021). Unrepresentative big surveys significantly overestimated US vaccine uptake. *Nature*, 600, 695–700.
+2. Groves, R. M. (2006). Nonresponse rates and nonresponse bias in household surveys. *Public Opinion Quarterly*, 70(5), 646–675.
+3. Hájek, J. (1971). Comment on "An Essay on the Logical Foundations of Survey Sampling, Part One" by D. Basu. In *Foundations of Statistical Inference*, p. 236. Holt, Rinehart & Winston.
+4. Horvitz, D. G., & Thompson, D. J. (1952). A generalization of sampling without replacement from a finite universe. *Journal of the American Statistical Association*, 47(260), 663–685.
+5. Little, R. J. A., & Rubin, D. B. (2019). *Statistical Analysis with Missing Data* (3rd ed.). Wiley.
+6. Meng, X.-L. (2018). Statistical paradises and paradoxes in big data (I): Law of large populations, big data paradox, and the 2016 US presidential election. *Annals of Applied Statistics*, 12(2), 685–726.
+7. Robins, J. M., Rotnitzky, A., & Zhao, L. P. (1994). Estimation of regression coefficients when some regressors are not always observed. *Journal of the American Statistical Association*, 89(427), 846–866.
+8. Rosenbaum, P. R. (1987). Sensitivity analysis for certain permutation inferences in matched observational studies. *Biometrika*, 74(1), 13–26.
+9. Rosenbaum, P. R., & Rubin, D. B. (1983). The central role of the propensity score in observational studies for causal effects. *Biometrika*, 70(1), 41–55.
+10. Tigre, R. (2023). *A Data-Driven Way of Using Client Feedback in Product Development*. Medium.
+11. VanderWeele, T. J., & Ding, P. (2017). Sensitivity analysis in observational research: Introducing the E-value. *Annals of Internal Medicine*, 167(4), 268–274.
