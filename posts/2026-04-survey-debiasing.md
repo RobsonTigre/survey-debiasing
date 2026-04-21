@@ -96,3 +96,13 @@ The best defenses are additive: (i) include every plausibly relevant covariate i
 When positivity fails, you have two options: trim the weights (which shifts your estimand toward the **overlap population** — the cohort where respondent-types and non-respondent-types actually coexist — and stabilizes variance), or restrict the target population to the subset where positivity holds and report for that subset only. In our simulation, 50 respondents had raw weights above the trimming threshold of 395, and capping them shifted the debiased estimate from 22.9% to 26.7% — a 3.9 pp swing driven entirely by a handful of unusual respondents. That sensitivity is why trimmed and raw estimates should both be reported.
 
 **Correct specification, interference, and measurement error (briefly).** Three other assumptions fail more quietly. *Model specification*: your propensity model has to actually capture P(respond | X). Logistic regression with main effects is a defensible starting point; gradient-boosted trees or random forests give you more flexibility, and comparing specifications is a cheap way to spot-check stability. *No interference*: one user's response shouldn't affect another's — usually fine, occasionally broken if users discuss the survey in group chats. *No measurement error*: your covariates are observed accurately. For marketplace signals like app opens and spend this is almost always met; for self-reported fields, less so.
+
+## Putting it to work
+
+A three-step workflow for your next sub-5%-response-rate survey:
+
+1. **Inspect the tilt.** Compare summary statistics for respondents vs. the invited population on every observable you have. If they're indistinguishable, stop — you don't have a bias problem to fix. They won't be.
+2. **Fit a propensity model.** Logistic regression with all your covariates is a reasonable default; swap in gradient-boosted trees when your feature set grows or effects are nonlinear. Save the predicted propensities.
+3. **Report both numbers plus the sensitivity.** Publish the naive estimate, the trimmed-IPW debiased estimate, and the raw-IPW debiased estimate side-by-side. The gap between them is your best summary of how much the selection bias is doing. In our example that gap was **40.9% → 26.7% → 22.9%** — the difference between shipping one-hour delivery as a mass-market product or a premium niche.
+
+The non-destructive principle: don't throw biased survey data away, and don't pretend it isn't biased. Fit the propensity model, weight honestly, and tell the whole story.
