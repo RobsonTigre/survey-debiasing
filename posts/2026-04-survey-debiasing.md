@@ -42,3 +42,41 @@ estimate = Σ (y_i · w_i) / Σ w_i,    where   w_i = 1 / ê(x_i)
 `y_i` is the outcome (1 if respondent *i* said "very likely," 0 otherwise) and `ê(x_i)` is that respondent's estimated propensity score given their observables `x_i`.[^1] That's it — no data is thrown away; every respondent still shows up in the estimate, but underrepresented respondents show up with more weight. That's what we mean by "non-destructive": the bias becomes a correction to the weights, not a deletion from the sample.
 
 [^1]: The ratio form here is technically the Hájek (1971) refinement of pure Horvitz-Thompson — slightly biased but much lower variance, and the default in most survey-weighting packages.
+
+## The worked example
+
+The simulation in the repo ([`survey_debiasing_simulation.R`](https://github.com/...)) generates 150,000 users with realistic marketplace characteristics, selects 1,001 respondents with a bias toward engaged and high-spending users, and walks through the IPW correction. Here's what each step looks like in code and what the numbers say.
+
+**Step 1 — Look at respondents vs. population.** The invited users average 38 years old, are 29% female, spend ~$2,100 per year on the platform, and open the app ~13 times per month. The 1,001 who actually responded are older (41), less female (21%), spend about five times more (~$10,800/year), and open the app ~60% more often (21 times per month). The direction of the tilt is what you'd expect, and the magnitude is larger than you might guess on priors.
+
+**Step 2 — Fit a propensity model.** Regress *responded* on user observables:
+
+```r
+propensity_model <- glm(
+  responded ~ age + female + has_revenue + deposits_per_year +
+              withdrawals_per_year + monthly_app_opens,
+  data = population,
+  family = binomial(link = "logit")
+)
+```
+
+Every predictor is significant at p < 0.01; app opens dominate practically (each additional monthly open bumps log-odds of responding by ~0.14, which compounds fast). The resulting propensity scores average **15.6% among actual respondents** vs. **0.6% among non-respondents** — respondents are, on average, twenty-seven times more likely to respond than non-respondents. That's your selection bias, measured directly.
+
+**Step 3 — Compute weights.** For each respondent, the inverse-propensity weight `w_i = 1/ê(x_i)`. Some respondents have tiny estimated propensities, which produces huge weights — the mean raw weight is 89 and the max is 3,073. Extreme weights inflate variance, so practitioners usually compute a **trimmed** variant that caps weights at, say, the 95th percentile (here: 395) and a **stabilized** variant that scales by the overall response rate. All three are in the script:
+
+```r
+trim_threshold <- min(quantile(weight_raw, 0.95, na.rm = TRUE),
+                      5 * mean(weight_raw, na.rm = TRUE))
+weight_trimmed    <- pmin(weight_raw, trim_threshold)
+weight_stabilized <- (n_respondents / n_invited) / propensity_score
+```
+
+**Step 4 — Compute the weighted estimate.**
+
+```r
+debiased <- sum(interest * weight_trimmed) / sum(weight_trimmed)
+```
+
+**The headline:** the naive estimate is **40.9%**, the debiased estimate with trimmed weights is **26.7%**, and with raw or stabilized weights is **22.9%**. The naive number overstated demand by **14–18 percentage points** — in headcount terms, the difference between telling your team *"~61,000 users want one-hour delivery"* and telling them *"~34,000–40,000 do."* Same survey, very different business decision.
+
+The trimmed estimate (26.7%) sits between naive and raw because capping extreme weights pulls the correction back toward the center. Raw (22.9%) is closer to unbiased under correct specification; trimmed is more robust to extreme weights and has a larger effective sample size (290 vs 130 in this run). Report both: **trimmed as your point estimate, raw alongside as a robustness check.**
