@@ -45,7 +45,7 @@ estimate = Σ (y_i · w_i) / Σ w_i,    where   w_i = 1 / ê(x_i)
 
 ## The worked example
 
-The simulation in the repo ([`survey_debiasing_simulation.R`](https://github.com/...)) generates 150,000 users with realistic marketplace characteristics, selects 1,001 respondents with a bias toward engaged and high-spending users, and walks through the IPW correction. Here's what each step looks like in code and what the numbers say.
+The simulation in the repo ([`survey_debiasing_marketplace.R`](https://github.com/...)) generates 150,000 users with realistic marketplace characteristics, selects 1,001 respondents with a bias toward engaged and high-spending users, and walks through the IPW correction. Here's what each step looks like in code and what the numbers say.
 
 **Step 1 — Look at respondents vs. population.** The invited users average 38 years old, are 29% female, spend ~$2,100 per year on the platform, and open the app ~13 times per month. The 1,001 who actually responded are older (41), less female (21%), spend about five times more (~$10,800/year), and open the app ~60% more often (21 times per month). The direction of the tilt is what you'd expect, and the magnitude is larger than you might guess on priors.
 
@@ -53,8 +53,8 @@ The simulation in the repo ([`survey_debiasing_simulation.R`](https://github.com
 
 ```r
 propensity_model <- glm(
-  responded ~ age + female + has_revenue + deposits_per_year +
-              withdrawals_per_year + monthly_app_opens,
+  responded ~ age + female + has_made_purchase + annual_spend +
+              annual_refunds + monthly_app_opens,
   data = population,
   family = binomial(link = "logit")
 )
