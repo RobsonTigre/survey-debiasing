@@ -1,1 +1,8 @@
-.DS_Store
+# Companion repo for the Substack post — keep only R scripts, README, and this file.
+# Everything else (design docs, draft posts, PDFs, .DS_Store, etc.) lives locally
+# for reference but is not tracked.
+
+/*
+!/*.R
+!/README.md
+!/.gitignore
